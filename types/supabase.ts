@@ -534,6 +534,14 @@ export type Database = {
       }
     }
     Functions: {
+      increment_post_likes: {
+        Args: { post_id: string }
+        Returns: null
+      }
+      decrement_post_likes: {
+        Args: { post_id: string }
+        Returns: null
+      }
       get_followers_count: {
         Args: { user_id: string }
         Returns: number

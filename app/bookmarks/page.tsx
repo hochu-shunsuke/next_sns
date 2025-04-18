@@ -1,5 +1,4 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { PostCard } from "@/components/post/post-card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ThreadListItem } from "@/components/thread/thread-list-item"
 
@@ -59,7 +58,12 @@ export default function BookmarksPage() {
 
           <TabsContent value="posts" className="mt-4 space-y-4">
             {posts.map((post) => (
-              <PostCard key={post.id} post={post} />
+              <ul key={post.id}>
+                <li>{post.id}</li>
+                <li>{post.content}</li>
+                <li>{post.user_id}</li>
+                <li>{post.created_at}</li>
+              </ul>
             ))}
           </TabsContent>
 

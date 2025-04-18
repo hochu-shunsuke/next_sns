@@ -6,7 +6,6 @@ import { useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { PostCard } from "@/components/post/post-card"
 import { Search } from "lucide-react"
 import { UserListItem } from "@/components/user/user-list-item"
 import { ThreadListItem } from "@/components/thread/thread-list-item"
@@ -125,12 +124,7 @@ export default function SearchPage() {
             </Card>
           </TabsContent>
 
-          <TabsContent value="posts" className="mt-4 space-y-4">
-            {posts.map((post) => (
-              <PostCard key={post.id} post={post} />
-            ))}
-          </TabsContent>
-
+          
           <TabsContent value="threads" className="mt-4">
             <Card className="border">
               <CardContent className="p-0">

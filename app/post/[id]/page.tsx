@@ -7,10 +7,7 @@ import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 import { Textarea } from "@/components/ui/textarea"
 import { Heart, MessageCircle, Share2, Bookmark, ArrowLeft, Loader2 } from "lucide-react"
 import Link from "next/link"
-import { ShareDialog } from "@/components/post/share-dialog"
-import { PostHeader } from "@/components/post/post-header"
-import { PostContent } from "@/components/post/post-content"
-import { CommentItem } from "@/components/post/comment-item"
+
 
 export default function PostDetailPage({ params }: { params: { id: string } }) {
   const postId = Number(params.id)
@@ -89,12 +86,6 @@ export default function PostDetailPage({ params }: { params: { id: string } }) {
         </div>
 
         <Card className="mb-6 border">
-          <CardHeader className="flex flex-row items-start gap-3 space-y-0 p-4">
-            <PostHeader author={post.author} avatar={post.avatar} timestamp={post.timestamp} />
-          </CardHeader>
-          <CardContent className="p-4 pt-0">
-            <PostContent content={post.content} />
-          </CardContent>
           <CardFooter className="flex justify-between border-t p-3">
             <Button
               variant="ghost"
@@ -164,14 +155,12 @@ export default function PostDetailPage({ params }: { params: { id: string } }) {
           </CardHeader>
           <CardContent className="p-0">
             <div className="divide-y">
-              {post.comments.map((comment) => (
-                <CommentItem key={comment.id} comment={comment} />
-              ))}
+
             </div>
           </CardContent>
         </Card>
 
-        <ShareDialog isOpen={isShareOpen} onClose={() => setIsShareOpen(false)} postId={postId} />
+
       </div>
   )
 }

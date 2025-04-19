@@ -1,226 +1,99 @@
-"use client";
+"use client"
 
-import { useState } from "react";
-import Link from "next/link";
-import { formatDistanceToNow } from "date-fns";
-import { ja } from "date-fns/locale";
-import { Heart, MessageCircle, Bookmark, Share, MoreHorizontal } from "lucide-react";
-import { Avatar } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
-import { 
-  DropdownMenu, 
-  DropdownMenuContent, 
-  DropdownMenuItem, 
-  DropdownMenuTrigger 
-} from "@/components/ui/dropdown-menu";
-import { useToast } from "@/components/ui/use-toast";
-import { useAuth } from "@/hooks/use-auth";
-import { toggleLike, toggleBookmark, deletePost } from "@/lib/posts";
-import type { PostWithAuthor } from "@/lib/posts";
+import { useState } from "react"
+import { Heart, MessageCircle, Share2, Bookmark } from "lucide-react"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
+import Link from "next/link"
+import { ShareDialog } from "@/components/share-dialog"
 
-interface PostCardProps {
-  post: PostWithAuthor;
-  onDelete?: () => void;
+interface Post {
+  id: number
+  author: string
+  avatar: string
+  content: string
+  timestamp: string
+  likes: number
+  comments: number
 }
 
-export function PostCard({ post, onDelete }: PostCardProps) {
-  const { user } = useAuth();
-  const { toast } = useToast();
-  const [isLiked, setIsLiked] = useState(post.isLiked);
-  const [likeCount, setLikeCount] = useState(post.likes_count);
-  const [isBookmarked, setIsBookmarked] = useState(post.isBookmarked);
-  const [isDeleting, setIsDeleting] = useState(false);
+interface PostCardProps {
+  post: Post
+}
 
-  const formattedDate = post.created_at 
-    ? formatDistanceToNow(new Date(post.created_at), { addSuffix: true, locale: ja })
-    : "";
+export function PostCard({ post }: PostCardProps) {
+  const [liked, setLiked] = useState(false)
+  const [likesCount, setLikesCount] = useState(post.likes)
+  const [bookmarked, setBookmarked] = useState(false)
+  const [isShareOpen, setIsShareOpen] = useState(false)
 
-  const handleLikeToggle = async () => {
-    if (!user) {
-      toast({
-        title: "ログインが必要です",
-        description: "いいねするにはログインしてください",
-      });
-      return;
+  const handleLike = () => {
+    if (liked) {
+      setLikesCount((prev) => prev - 1)
+    } else {
+      setLikesCount((prev) => prev + 1)
     }
+    setLiked(!liked)
+  }
 
-    try {
-      const newLiked = await toggleLike(post.id);
-      setIsLiked(newLiked);
-      setLikeCount(prev => newLiked ? prev + 1 : prev - 1);
-    } catch (error) {
-      toast({
-        title: "エラー",
-        description: "いいねの処理に失敗しました",
-        variant: "destructive",
-      });
-    }
-  };
-
-  const handleBookmarkToggle = async () => {
-    if (!user) {
-      toast({
-        title: "ログインが必要です",
-        description: "ブックマークするにはログインしてください",
-      });
-      return;
-    }
-
-    try {
-      const newBookmarked = await toggleBookmark(post.id);
-      setIsBookmarked(newBookmarked);
-    } catch (error) {
-      toast({
-        title: "エラー",
-        description: "ブックマークの処理に失敗しました",
-        variant: "destructive",
-      });
-    }
-  };
-
-  const handleDelete = async () => {
-    if (!user || user.id !== post.user_id) return;
-    
-    if (window.confirm("この投稿を削除しますか？")) {
-      setIsDeleting(true);
-      try {
-        await deletePost(post.id);
-        toast({
-          title: "投稿を削除しました",
-        });
-        if (onDelete) onDelete();
-      } catch (error) {
-        toast({
-          title: "エラー",
-          description: "投稿の削除に失敗しました",
-          variant: "destructive",
-        });
-      } finally {
-        setIsDeleting(false);
-      }
-    }
-  };
-
-  const handleShare = async () => {
-    try {
-      await navigator.clipboard.writeText(`${window.location.origin}/posts/${post.id}`);
-      toast({
-        title: "リンクをコピーしました",
-      });
-    } catch (error) {
-      toast({
-        title: "エラー",
-        description: "リンクのコピーに失敗しました",
-        variant: "destructive",
-      });
-    }
-  };
-
-  const isOwner = user?.id === post.user_id;
+  const handleBookmark = () => {
+    setBookmarked(!bookmarked)
+  }
 
   return (
-    <div className="p-4 border-b hover:bg-muted/20 transition-colors">
-      <div className="flex gap-3">
-        <Link href={`/profile/${post.author?.username}`}>
-          <Avatar 
-            src={post.author?.avatar_url || undefined} 
-            fallback={(post.author?.display_name?.[0] || "U").toUpperCase()} 
-            className="w-10 h-10"
-          />
-        </Link>
-        
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 mb-1 text-sm">
-              <Link href={`/profile/${post.author?.username}`} className="font-semibold hover:underline truncate">
-                {post.author?.display_name}
-              </Link>
-              <span className="text-muted-foreground">@{post.author?.username}</span>
-              <span className="text-muted-foreground">·</span>
-              <span className="text-muted-foreground">{formattedDate}</span>
-            </div>
-            
-            {isOwner && (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon" className="h-8 w-8">
-                    <MoreHorizontal className="h-4 w-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuItem disabled={isDeleting} onClick={handleDelete}>
-                    {isDeleting ? "削除中..." : "削除"}
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            )}
-          </div>
-          
-          <Link href={`/posts/${post.id}`}>
-            <div className="mb-3 break-words">{post.content}</div>
-            
-            {post.image_url && (
-              <div className="mt-2 mb-3 overflow-hidden rounded-lg">
-                <img 
-                  src={post.image_url} 
-                  alt="Post image" 
-                  className="object-cover w-full max-h-96" 
-                />
-              </div>
-            )}
+    <>
+      <Card className="border">
+        <CardHeader className="flex flex-row items-start gap-3 space-y-0 p-3 pb-1">
+          <Link href={`/user/1`}>
+            <Avatar className="h-8 w-8">
+              <AvatarImage src={post.avatar || "/placeholder.svg"} alt={post.author} />
+              <AvatarFallback>{post.author[0]}</AvatarFallback>
+            </Avatar>
           </Link>
-          
-          <div className="flex justify-between max-w-md mt-2">
-            <Button
-              variant="ghost"
-              size="sm"
-              className="text-muted-foreground hover:text-primary hover:bg-primary/10"
-              asChild
-            >
-              <Link href={`/posts/${post.id}`}>
-                <MessageCircle className="w-4 h-4 mr-1" />
-                <span>{post.replies_count || 0}</span>
-              </Link>
-            </Button>
-            
-            <Button
-              variant="ghost"
-              size="sm"
-              className={`hover:bg-red-500/10 ${
-                isLiked 
-                  ? "text-red-500 hover:text-red-600" 
-                  : "text-muted-foreground hover:text-red-500"
-              }`}
-              onClick={handleLikeToggle}
-            >
-              <Heart className={`w-4 h-4 mr-1 ${isLiked ? "fill-current" : ""}`} />
-              <span>{likeCount || 0}</span>
-            </Button>
-            
-            <Button
-              variant="ghost"
-              size="sm"
-              className={`hover:bg-blue-500/10 ${
-                isBookmarked 
-                  ? "text-blue-500 hover:text-blue-600" 
-                  : "text-muted-foreground hover:text-blue-500"
-              }`}
-              onClick={handleBookmarkToggle}
-            >
-              <Bookmark className={`w-4 h-4 mr-1 ${isBookmarked ? "fill-current" : ""}`} />
-            </Button>
-            
-            <Button
-              variant="ghost"
-              size="sm"
-              className="text-muted-foreground hover:text-primary hover:bg-primary/10"
-              onClick={handleShare}
-            >
-              <Share className="w-4 h-4" />
-            </Button>
+          <div className="space-y-0.5">
+            <Link href={`/user/1`}>
+              <h3 className="text-sm font-semibold hover:underline">{post.author}</h3>
+            </Link>
+            <p className="text-xs text-muted-foreground">{post.timestamp}</p>
           </div>
-        </div>
-      </div>
-    </div>
-  );
+        </CardHeader>
+        <CardContent className="p-3 pt-1">
+          <p className="text-sm">{post.content}</p>
+        </CardContent>
+        <CardFooter className="flex justify-between border-t p-2">
+          <Button
+            variant="ghost"
+            size="sm"
+            className={`h-8 flex gap-1 px-2 ${liked ? "text-red-500" : ""}`}
+            onClick={handleLike}
+          >
+            <Heart className={`h-3.5 w-3.5 ${liked ? "fill-current" : ""}`} />
+            <span className="text-xs">{likesCount}</span>
+          </Button>
+          <Link href={`/post/${post.id}`}>
+            <Button variant="ghost" size="sm" className="h-8 flex gap-1 px-2">
+              <MessageCircle className="h-3.5 w-3.5" />
+              <span className="text-xs">{post.comments}</span>
+            </Button>
+          </Link>
+          <Button
+            variant="ghost"
+            size="sm"
+            className={`h-8 px-2 ${bookmarked ? "text-primary" : ""}`}
+            onClick={handleBookmark}
+          >
+            <Bookmark className={`h-3.5 w-3.5 ${bookmarked ? "fill-current" : ""}`} />
+            <span className="sr-only">ブックマーク</span>
+          </Button>
+          <Button variant="ghost" size="sm" className="h-8 px-2" onClick={() => setIsShareOpen(true)}>
+            <Share2 className="h-3.5 w-3.5" />
+            <span className="sr-only">シェア</span>
+          </Button>
+        </CardFooter>
+      </Card>
+
+      <ShareDialog isOpen={isShareOpen} onClose={() => setIsShareOpen(false)} postId={post.id} />
+    </>
+  )
 }

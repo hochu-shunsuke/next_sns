@@ -1,4 +1,4 @@
-import { ThemeSelector } from "@/components/theme-selector"
+import { ThemeSelector } from "@/components/theme/theme-selector"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 

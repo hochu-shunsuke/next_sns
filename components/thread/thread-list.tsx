@@ -1,5 +1,5 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { ThreadItem } from "@/components/thread-item"
+import { ThreadItem } from "@/components/thread/thread-item"
 
 // サンプルデータ
 const threads = [

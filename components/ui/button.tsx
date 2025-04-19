@@ -37,17 +37,39 @@ export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof buttonVariants> {
   asChild?: boolean
+  loading?: boolean
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, asChild = false, ...props }, ref) => {
+  ({ className, variant, size, asChild = false, loading = false, disabled, children, ...props }, ref) => {
     const Comp = asChild ? Slot : "button"
     return (
       <Comp
         className={cn(buttonVariants({ variant, size, className }))}
         ref={ref}
+        disabled={disabled || loading}
         {...props}
-      />
+      >
+        {loading && (
+          // シンプルなスピナー。お好みでカスタマイズ可
+          <svg className="animate-spin mr-2 h-4 w-4 text-current" viewBox="0 0 16 16" fill="none">
+            <circle
+              className="opacity-25"
+              cx="8"
+              cy="8"
+              r="7"
+              stroke="currentColor"
+              strokeWidth="2"
+            />
+            <path
+              className="opacity-75"
+              fill="currentColor"
+              d="M15 8a7 7 0 11-7-7v2a5 5 0 100 10V8z"
+            />
+          </svg>
+        )}
+        {children}
+      </Comp>
     )
   }
 )

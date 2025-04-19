@@ -9,6 +9,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { createPost } from "@/lib/posts";
 import { useAuth } from "@/hooks/use-auth";
 import { Camera, X, Loader2 } from "lucide-react";
+import { supabase } from "@/lib/supabase";
 
 interface PostFormProps {
   replyToId?: string;
@@ -132,11 +133,7 @@ export function PostForm({
   return (
     <div className="p-4 space-y-4 border-b">
       <div className="flex gap-3">
-        <Avatar 
-          src={user.user_metadata.avatar_url} 
-          fallback={user.user_metadata.display_name?.[0] || "U"} 
-          className="w-10 h-10"
-        />
+        ここにアバターとかユーザ情報を表示する
         <div className="flex-1">
           <Textarea
             placeholder={placeholder}

@@ -1,6 +1,6 @@
 "use client"
 
-import { PostCard } from "@/components/post-card"
+import { PostCard } from "@/components/post/post-card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 interface Post {

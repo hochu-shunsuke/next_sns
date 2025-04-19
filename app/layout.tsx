@@ -2,8 +2,8 @@
 
 import { usePathname } from "next/navigation";
 import { AuthProvider } from "@/hooks/use-auth";
-import { ThemeProvider } from "@/components/theme-provider";
-import { Navigation } from "@/components/navigation";
+import { ThemeProvider } from "@/components/theme/theme-provider";
+import { Navigation } from "@/components/navigation/navigation";
 import { Header } from "@/components/header";
 import "@/styles/globals.css";
 

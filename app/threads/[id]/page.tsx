@@ -4,7 +4,7 @@ import { ArrowLeft } from "lucide-react"
 import { ThreadHeader } from "@/components/thread/thread-header"
 import { ThreadActions } from "@/components/thread/thread-actions"
 import { ReplyForm } from "@/components/thread/reply-form"
-import { ThreadReply } from "@/components/thread-reply"
+import { ThreadReply } from "@/components/thread/thread-reply"
 
 export default function ThreadDetailPage({ params }: { params: { id: string } }) {
   const threadId = params.id

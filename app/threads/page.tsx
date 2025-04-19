@@ -1,4 +1,4 @@
-import { ThreadList } from "@/components/thread-list"
+import { ThreadList } from "@/components/thread/thread-list"
 
 export default function ThreadsPage() {
   return (

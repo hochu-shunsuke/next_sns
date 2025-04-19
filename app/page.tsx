@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { PostInput } from "@/components/post-input";
+import { PostInput } from "@/components/post/post-input";
 import { PostCard } from "@/components/post/post-card";
 import { useAuth } from "@/hooks/use-auth";
 import type { Post } from "@/types";

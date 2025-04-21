@@ -10,11 +10,11 @@ export default function HomeClient({ posts }: { posts: any[] }) {
 
   return (
     <main>
-      <button><a href="/posts/newpost">🟦ここから新規投稿🟦</a></button>
       <p>.</p>
       <p>.</p>
       {user?.email ? (
         <div>
+          <button><a href="/posts/newpost">🟦ここから新規投稿🟦</a></button>
           <p>ようこそ、{user.email}さん！</p>
           <button onClick={() => supabase.auth.signOut()}>ログアウト</button>
         </div>

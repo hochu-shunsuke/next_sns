@@ -8,7 +8,9 @@ export default function PostCard({ post }: { post: any }) {
 
     return (
         <div>
-            <h3>{post.title}</h3>
+            <img src={post.profile.icon_color} alt="icon" />
+            @{post.profile.username}
+            <h3>{post.profile.display_name}</h3>
             <p>{post.content}</p>
             <span>{formatted}</span>
         </div>

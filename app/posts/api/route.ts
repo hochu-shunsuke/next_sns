@@ -3,25 +3,27 @@ import { createPost } from "@/app/posts/api/post";
 
 export async function POST(request: Request) {
     try {
-        const { title, content } = await request.json();
+        const { content } = await request.json();
         
-        if (!title || !content) {
+        if (!content) {
             return NextResponse.json(
-                { message: "title and content are required" },
+                { message: "content is required" },
                 { status: 400 }
             );
         }
 
         // 投稿を作成
-        const post = await createPost(title, content);
+        const post = await createPost(content);
 
         return NextResponse.json(post, { status: 201 });
 
-    } catch (error) {
-
-        console.error('Error creating post:', error);
+    } catch (err) {
+        console.error('Error creating post:', err);
         return NextResponse.json(
-            { message: error instanceof Error ? error.message : 'An unexpected error occurred' },
+            {
+                message: err instanceof Error ? err.message : 'Failed to create post',
+                error: err instanceof Error ? err.stack : null
+            },
             { status: 500 }
         );
     }

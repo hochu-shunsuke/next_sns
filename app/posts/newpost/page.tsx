@@ -26,13 +26,17 @@ export default function NewPost() {
         setError(null);
 
         try {
-            const response = await fetch('/posts/api/', {
+            console.log('Creating post at newpost')
+            const response = await fetch('/posts/api', {
                 method: 'POST',
                 headers: {
+                    'Authorization': `Bearer ${user.access_token}`,
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({content}),
             });
+
+            console.log('Response:', response)
 
             if (!response.ok) {
                 const err = await response.json();
